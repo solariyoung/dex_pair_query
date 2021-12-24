@@ -1,11 +1,16 @@
+import random
+
 from web3 import Web3
 
 import abi
+
+file = open("./pairs.txt", mode='w')
 
 
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
     print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+
 
 def pair_add(pair):
     if pair[0] == "Cake-LP":
@@ -20,6 +25,11 @@ def pair_add(pair):
         mdex_pair.append(pair)
     if pair[0] == "APE-LP":
         ape_pair.append(pair)
+    file.write(str(pair))
+    file.write('\n')
+
+    if random.randint(1, 20) == 1:
+        file.flush()
 
 
 rpc = 'https://bsc-dataseed1.defibit.io'
@@ -57,15 +67,15 @@ for f in factory_list:
     pairs_num = f.functions.allPairsLength().call()
 
     p = 0
-    while p < 10:
+    while p < pairs_num:
         print(p)
         pair = f.functions.allPairs(p).call()
 
         lp = bsc_web3.eth.contract(address=pair, abi=abi.lp_abi)
         reserves = lp.functions.getReserves().call()
-        lp_name = lp.functions.symbol().call()
 
         if reserves[0] > 10 * 1e18 and reserves[1] > 10 * 1e18:
+            lp_name = lp.functions.symbol().call()
             token0_address = lp.functions.token0().call()
             token1_address = lp.functions.token1().call()
 
@@ -81,6 +91,5 @@ for f in factory_list:
 
         p += 1
 
-print(pancake_pair)
-print(ape_pair)
+file.close()
 
