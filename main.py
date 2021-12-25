@@ -60,7 +60,7 @@ ape_pair = []
 for f in factory_list:
     pairs_num = f.functions.allPairsLength().call()
 
-    p = 0
+    p = 212600
     while p < pairs_num:
         print(p)
         pair = f.functions.allPairs(p).call()
@@ -73,8 +73,12 @@ for f in factory_list:
             token0_address = lp.functions.token0().call()
             token1_address = lp.functions.token1().call()
 
-            token0_symbol = bsc_web3.eth.contract(address=token0_address, abi=abi.token_abi).functions.symbol().call()
-            token1_symbol = bsc_web3.eth.contract(address=token1_address, abi=abi.token_abi).functions.symbol().call()
+            try:
+                token0_symbol = bsc_web3.eth.contract(address=token0_address, abi=abi.token_abi).functions.symbol().call()
+                token1_symbol = bsc_web3.eth.contract(address=token1_address, abi=abi.token_abi).functions.symbol().call()
+            except:
+                p += 1
+                continue
 
             print(lp_name, token0_symbol, token0_address, token1_symbol, token1_address)
             pair_to_collect = [lp_name,
